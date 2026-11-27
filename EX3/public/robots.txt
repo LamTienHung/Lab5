@@ -1,0 +1,17 @@
+# UIT-S3T Lab 5 — Crawler & AI agent policy
+
+# Mặc định: cho phép trang công khai, chặn API
+User-agent: *
+Allow: /
+Allow: /llms.txt
+Disallow: /api/
+
+# AI crawlers: chỉ được đọc trang chính và llms.txt, không crawl API / dữ liệu chat
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: Google-Extended
+User-agent: PerplexityBot
+User-agent: CCBot
+Allow: /$
+Allow: /llms.txt
+Disallow: /
