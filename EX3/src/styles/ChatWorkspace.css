@@ -1,0 +1,361 @@
+/* ===== EX3 — Agentic Chat Workspace =====
+   Container query, 100dvh, nút ≥ 44×44px, tương phản ≥ 4.5:1
+   Gộp: EX2 + WebMCP status + icon lucide + spinner */
+
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b1220;
+  --surface: #141c2e;
+  --surface-2: #1c2640;
+  --border: #2c3a57;
+  --text: #f1f5f9;
+  --muted: #a3b1c6;
+  --accent: #f5b935;
+  --on-accent: #111827;
+  --focus: #fcd34d;
+  --bubble: #161f30;        /* slide 32 */
+  --bubble-text: #f8fafc;
+  --bubble-own: #1e3a5f;
+  --bubble-own-text: #e0f2fe;
+  --agent: #3b1f4f;
+  --agent-text: #e9d5ff;
+  --ok: #86efac;
+  --warn: #fcd34d;
+  --bad: #fca5a5;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f4f6fa;
+  --surface: #ffffff;
+  --surface-2: #eef1f6;
+  --border: #d5dbe5;
+  --text: #0f172a;
+  --muted: #4b5563;
+  --accent: #b45309;
+  --on-accent: #ffffff;
+  --focus: #1d4ed8;
+  --bubble: #eef1f6;
+  --bubble-text: #0f172a;
+  --bubble-own: #dbeafe;
+  --bubble-own-text: #1e3a8a;
+  --agent: #f3e8ff;
+  --agent-text: #581c87;
+  --ok: #166534;
+  --warn: #92400e;
+  --bad: #991b1b;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+
+body {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+  line-height: 1.5;
+}
+
+button, input { font: inherit; }
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ===== App shell: header + chat chiếm đúng 100dvh ===== */
+.app-shell {
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.6rem clamp(0.75rem, 2.5vw, 1.5rem);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.app-title {
+  margin: 0;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+}
+
+.app-title > span[aria-hidden] { color: var(--accent); }
+
+.app-title__sub {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.app-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.app-main {
+  min-height: 0;            /* cho phép con cuộn bên trong grid */
+  display: flex;
+  justify-content: center;
+}
+
+/* ===== WebMCP status ===== */
+.mcp-status {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.mcp-status--native { color: var(--ok); }
+.mcp-status--mock { color: var(--warn); }
+
+/* ===== Nút ===== */
+.btn,
+.chip,
+.icon-btn {
+  min-height: 44px;
+  min-width: 44px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chip {
+  padding: 0 0.9rem;
+  border-radius: 999px;
+}
+
+.chip--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+
+/* Spinner cho icon Loader2 */
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== Chat: container query context ===== */
+.chat {
+  container-type: inline-size;
+  container-name: chatWorkspace;
+  width: 100%;
+  max-width: 900px;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  border-inline: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.chat__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.chat__title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.room-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Trạng thái kết nối — icon Wifi/WifiOff đổi màu theo trạng thái */
+.conn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0 auto;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.conn svg { color: var(--muted); }
+.conn--connected svg { color: var(--ok); }
+.conn--connecting svg,
+.conn--unavailable svg { color: var(--warn); }
+.conn--failed svg { color: var(--bad); }
+
+/* ===== Danh sách tin ===== */
+.chat-list {
+  list-style: none;
+  margin: 0;
+  padding: 1rem;
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.chat-empty {
+  margin: 0;
+  display: grid;
+  place-content: center;
+  color: var(--muted);
+}
+
+.chat-bubble {
+  align-self: flex-start;
+  max-width: min(75%, 560px);
+  padding: 0.55rem 0.8rem;
+  border-radius: 14px 14px 14px 4px;
+  background: var(--bubble);
+  color: var(--bubble-text);
+  border: 1px solid var(--border);
+}
+
+.chat-bubble--own {
+  align-self: flex-end;
+  border-radius: 14px 14px 4px 14px;
+  background: var(--bubble-own);
+  color: var(--bubble-own-text);
+}
+
+.chat-bubble--agent {
+  background: var(--agent);
+  color: var(--agent-text);
+}
+
+.chat-bubble--system {
+  align-self: center;
+  font-style: italic;
+}
+
+.chat-bubble__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.chat-bubble__name { font-weight: 700; }
+
+.chat-bubble__text {
+  margin: 0.15rem 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.role-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0 0.4rem;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 0.2);
+  font-size: 0.7rem;
+}
+
+/* ===== Composer ===== */
+.composer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--border);
+}
+
+.composer__input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 0.9rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.composer__input::placeholder { color: var(--muted); }
+
+.chat-send-btn {
+  min-width: 52px;
+  padding: 0 0.9rem;
+}
+
+.composer__error {
+  width: 100%;
+  margin: 0;
+  color: var(--bad);
+  font-size: 0.8rem;
+}
+
+/* ===== Container query: container hẹp → xếp dọc ===== */
+@container chatWorkspace (max-width: 600px) {
+  .chat__header { flex-direction: column; align-items: stretch; }
+  .conn { margin-left: 0; }
+  .chat-bubble { max-width: 90%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}

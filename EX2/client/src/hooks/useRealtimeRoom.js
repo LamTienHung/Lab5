@@ -11,7 +11,7 @@ const MESSAGE_EVENT = 'new-message'; // khớp server lib/pusher.js
 // Ex 2.1 — Killing the Slide 16 WebSocket Leak
 // - deps CHỈ [roomId, dispatch] → KHÔNG có messages → không reconnect mỗi tin nhắn
 // - handler chỉ dispatch APPEND_MESSAGE (không đọc state)
-// - cleanup: unbind_all → unsubscribe → disconnect
+// - cleanup: unbind_all → unsubscribe (nếu đang mở) → disconnect
 export function useRealtimeRoom(roomId) {
   const dispatch = useAppDispatch();
 
@@ -40,7 +40,10 @@ export function useRealtimeRoom(roomId) {
     // Mandatory teardown: chống tích tụ socket
     return () => {
       channel.unbind_all();
-      pusher.unsubscribe(channelName);
+      // Chỉ gửi frame unsubscribe khi socket đang mở; nếu đang kết nối/đã đóng thì disconnect là đủ
+      if (pusher.connection.state === 'connected') {
+        pusher.unsubscribe(channelName);
+      }
       pusher.connection.unbind_all();
       pusher.disconnect();
     };
