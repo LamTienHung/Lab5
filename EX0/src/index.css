@@ -1,0 +1,201 @@
+/* ===== Design tokens theo theme =====
+   <html data-theme="dark|light"> được đồng bộ bởi useEffect([state.theme]) trong AppProvider.
+   Mọi cặp chữ/nền đạt tương phản ≥ 4.5:1 (WCAG 2.2 AA). */
+
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b1220;
+  --surface: #141c2e;
+  --surface-2: #1c2640;
+  --border: #2c3a57;
+  --text: #f1f5f9;
+  --muted: #a3b1c6;
+  --accent: #f5b935;
+  --on-accent: #111827;
+  --focus: #fcd34d;
+
+  --tag-himass-bg: #1e3a5f; --tag-himass-fg: #bfdbfe;
+  --tag-tanvuu-bg: #3b1f4f; --tag-tanvuu-fg: #e9d5ff;
+  --ok-bg: #123524;   --ok-fg: #86efac;
+  --warn-bg: #3a2e0b; --warn-fg: #fcd34d;
+  --bad-bg: #3f1418;  --bad-fg: #fca5a5;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f4f6fa;
+  --surface: #ffffff;
+  --surface-2: #eef1f6;
+  --border: #d5dbe5;
+  --text: #0f172a;
+  --muted: #4b5563;
+  --accent: #b45309;
+  --on-accent: #ffffff;
+  --focus: #1d4ed8;
+
+  --tag-himass-bg: #dbeafe; --tag-himass-fg: #1e3a8a;
+  --tag-tanvuu-bg: #f3e8ff; --tag-tanvuu-fg: #581c87;
+  --ok-bg: #dcfce7;   --ok-fg: #166534;
+  --warn-bg: #fef3c7; --warn-fg: #92400e;
+  --bad-bg: #fee2e2;  --bad-fg: #991b1b;
+}
+
+/* ===== Reset tối giản ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+}
+
+/* Focus rõ ràng cho bàn phím (WCAG 2.4.7) */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ===== App shell: 100dvh thay cho chiều cao cố định ===== */
+.app-shell {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  padding: 0.75rem clamp(0.75rem, 2.5vw, 1.5rem);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.app-title {
+  margin: 0;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: 700;
+}
+
+.app-title span {
+  color: var(--accent);
+}
+
+.app-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.app-main {
+  min-width: 0;
+}
+
+/* ===== Tab bar ===== */
+.tab-bar {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+
+.tab {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 1rem;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab--active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+}
+
+/* ===== Nút icon (ThemeToggle) ===== */
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* ===== Panel placeholder ===== */
+.panel-placeholder {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+}
+
+/* ===== Tiện ích a11y ===== */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Tôn trọng người dùng giảm chuyển động */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Đổi theme mượt (bị tắt bởi rule reduced-motion ở trên nếu cần) */
+body,
+.app-header,
+.evidence-card,
+.chip,
+.page-btn,
+.tab,
+.icon-btn {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}

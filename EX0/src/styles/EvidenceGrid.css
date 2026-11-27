@@ -1,0 +1,209 @@
+/* Ex 0.2 — Responsive bằng Container Queries
+   Bỏ container cứng 800px của React 7 cũ.
+   Biến màu (--surface, --text, …) định nghĩa trong index.css theo theme. */
+
+.evidence-container {
+  container-type: inline-size;
+  container-name: evidence;
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: clamp(0.75rem, 2.5vw, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ---------- Toolbar ---------- */
+.evidence-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.evidence-toolbar h2 {
+  margin: 0;
+  font-size: clamp(1.15rem, 3cqi, 1.5rem);
+}
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.evidence-count {
+  margin: 0 0 0 auto;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* Chip lọc — vùng chạm tối thiểu 44×44px (WCAG 2.5.8) */
+.chip {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.chip--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+/* ---------- Grid: số cột theo bề rộng container, không theo viewport ---------- */
+.grid-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@container evidence (min-width: 560px) {
+  .grid-layout { grid-template-columns: repeat(2, 1fr); }
+}
+
+@container evidence (min-width: 900px) {
+  .grid-layout { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Container hẹp: toolbar xếp dọc, bộ đếm xuống dòng */
+@container evidence (max-width: 480px) {
+  .evidence-count { margin-left: 0; width: 100%; }
+}
+
+/* ---------- Card ---------- */
+.evidence-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.evidence-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.evidence-card__title {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.player-tag,
+.stage-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+}
+
+.player-tag--himass { background: var(--tag-himass-bg); color: var(--tag-himass-fg); }
+.player-tag--tanvuu { background: var(--tag-tanvuu-bg); color: var(--tag-tanvuu-fg); }
+.stage-tag { background: var(--surface-2); color: var(--muted); }
+
+.telemetry {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.telemetry div {
+  padding: 0.5rem;
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.telemetry dt {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.telemetry dd {
+  margin: 0.15rem 0 0;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+}
+
+.badge--ok   { background: var(--ok-bg);   color: var(--ok-fg); }
+.badge--warn { background: var(--warn-bg); color: var(--warn-fg); }
+.badge--bad  { background: var(--bad-bg);  color: var(--bad-fg); }
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+}
+
+/* ---------- Pagination ---------- */
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.pagination__list {
+  display: flex;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.page-btn {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.page-btn--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.page-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pagination__status {
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
