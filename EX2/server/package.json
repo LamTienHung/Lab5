@@ -1,0 +1,21 @@
+{
+  "name": "lab5-ex2-chat-server",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node --watch --env-file=.env server.js",
+    "start": "node --env-file=.env server.js"
+  },
+  "engines": {
+    "node": ">=20.6"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "firebase-admin": "^13.0.0",
+    "mongoose": "^8.9.0",
+    "pusher": "^5.2.0"
+  }
+}
