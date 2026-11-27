@@ -1,5 +1,5 @@
 /* Ex 3.2 refactor: styled-components → CSS Modules
-   Class được Vite băm tên (vd. .box_x7f2a) → không đụng độ class toàn cục.
+   Class được Vite băm tên (vd. ._button_x7f2a) → không đụng độ class toàn cục.
    Vẫn dùng biến CSS theme toàn cục (--accent, --text…) từ ChatWorkspace.css. */
 
 .box {
@@ -8,7 +8,9 @@
   gap: 0.5rem;
 }
 
-.button {
+/* Style chung cho cả 2 loại nút (thay cho `composes`, để VS Code không cảnh báo) */
+.button,
+.primary {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -24,8 +26,8 @@
   cursor: pointer;
 }
 
+/* Nút chính: chỉ đổi màu */
 .primary {
-  composes: button;
   background: var(--accent);
   border-color: var(--accent);
   color: var(--on-accent);
