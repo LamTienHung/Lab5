@@ -1,0 +1,287 @@
+/* ===== EX1 — 60fps Reels =====
+   - 100dvh + scroll-snap-type: y mandatory
+   - object-fit: cover → CLS = 0
+   - Ticker translate3d (GPU) + tắt khi prefers-reduced-motion
+   - Nút ≥ 44×44px, tương phản ≥ 4.5:1 */
+
+:root {
+  color-scheme: dark;
+  --bg: #000;
+  --text: #f8fafc;
+  --muted: #cbd5e1;
+  --accent: #f5b935;
+  --on-accent: #111827;
+  --glass: rgb(15 23 42 / 0.72);
+  --focus: #fcd34d;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ===== App bar nổi trên video ===== */
+.app-bar {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;            /* khớp bề rộng cột reel */
+  z-index: 20;
+  padding: calc(0.75rem + var(--safe-top)) 1rem 1.5rem;
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.7), transparent);
+  pointer-events: none;
+}
+
+.app-bar__title {
+  margin: 0;
+  font-size: clamp(1rem, 4vw, 1.25rem);
+  font-weight: 700;
+}
+
+.app-bar__title span[aria-hidden] {
+  color: var(--accent);
+}
+
+/* ===== Feed: cuộn dọc + snap từng reel ===== */
+.reel-feed {
+  height: 100dvh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+}
+
+.reel-feed::-webkit-scrollbar {
+  display: none;
+}
+
+/* ===== Một reel = một màn hình ===== */
+.reel {
+  position: relative;
+  height: 100dvh;
+  width: 100%;
+  max-width: 480px;            /* desktop: khung dọc giữa màn hình */
+  margin-inline: auto;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;    /* cuộn nhanh cũng dừng ở từng reel */
+  overflow: hidden;
+  background: #0b1220;
+  contain: layout paint;       /* cô lập layout/paint → cuộn mượt hơn */
+}
+
+.reel__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;           /* thay object-fit: fill (méo hình) */
+  display: block;
+}
+
+/* ===== Lớp phủ thông tin ===== */
+.reel__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: calc(3.5rem + var(--safe-top)) 0 calc(1rem + var(--safe-bottom));
+  background: linear-gradient(to top, rgb(0 0 0 / 0.75) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+.reel__overlay > * {
+  pointer-events: auto;
+}
+
+.reel__bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-inline: 1rem;
+}
+
+.reel__info {
+  min-width: 0;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.8);
+}
+
+.reel__title {
+  margin: 0.4rem 0 0.15rem;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.reel__stage {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.player-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+}
+
+.player-tag--himass { background: #1e3a5f; color: #bfdbfe; }
+.player-tag--tanvuu { background: #3b1f4f; color: #e9d5ff; }
+
+.reel__error {
+  min-height: 1.25rem;
+  margin: 0.5rem 1rem 0;
+  color: #fca5a5;
+  font-size: 0.85rem;
+}
+
+/* ===== Nút điều khiển ===== */
+.reel__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reel-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 48px;           /* ≥ 44×44px */
+  padding: 0.35rem;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 999px;
+  background: var(--glass);
+  color: var(--text);
+  font-size: 1.1rem;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: transform 0.1s ease;
+}
+
+.reel-btn:active {
+  transform: scale(0.92);
+}
+
+.reel-btn--endorse {
+  border-radius: 16px;
+  padding: 0.45rem 0.6rem;
+}
+
+.reel-btn--endorse[aria-busy='true'] {
+  border-color: var(--accent);
+}
+
+.reel-btn__count {
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.reel-btn--text {
+  border-radius: 10px;
+  padding: 0 1.25rem;
+  font-size: 1rem;
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+}
+
+/* ===== Telemetry ticker: GPU marquee ===== */
+.ticker {
+  overflow: hidden;
+  background: rgb(0 0 0 / 0.55);
+  border-block: 1px solid rgb(245 185 53 / 0.35);
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 18s linear infinite;
+  will-change: transform;
+}
+
+.ticker-group {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.ticker-item {
+  padding: 0.35rem 1.25rem;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* ===== Trạng thái feed ===== */
+.feed-message {
+  display: grid;
+  place-content: center;
+  gap: 1rem;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.feed-message code {
+  color: var(--accent);
+}
+
+/* ===== WCAG 2.2 — giảm chuyển động ===== */
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
+    transform: none;
+  }
+  .reel-btn {
+    transition: none;
+  }
+}
